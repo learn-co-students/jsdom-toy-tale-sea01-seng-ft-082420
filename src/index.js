@@ -11,16 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fetch Variables
   const toyUrl = 'http://localhost:3000/toys'
-  const likeConfig = {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      'likes': 1
-    })
-  }
 
   // Call Fetch Functions
   fetchToys(toyUrl)
@@ -38,8 +28,21 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(toy => buildToyCard(toy))
   }
 
-  function likeToy(id) {
-    fetch(`http://localhost:3000/toys/${id}`, likeConfig)
+  function likeToy(toy, e) {
+    fetch(`http://localhost:3000/toys/${toy.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        'likes': toy.likes + 1
+      })
+    })
+    .then(resp => resp.json())
+    .then( () => {
+      e.target.parentElement.children[2].textContent = `${toy.likes + 1} likes`
+    })
   }
 
   // Stand-Alone Event Listeners
@@ -97,8 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
     div.appendChild(p)
     div.appendChild(button)
     toyCollection.appendChild(div)
+
+    button.addEventListener('click', (e) => likeToy(data, e))
   }
-
-
 
 })
