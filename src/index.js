@@ -29,22 +29,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateLikes(toy, e){
-    fetch(`http://localhost:3000/toys/${toy.id}`,{
+    fetch(`http://localhost:3000/toys/${toy.id}`)
+    .then(resp => resp.json())
+    .then(refreshedToy => {
+    fetch(`http://localhost:3000/toys/${refreshedToy.id}`,{
       method:'PATCH',
       headers:{
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "likes": toy.likes + 1})
+        "likes": refreshedToy.likes + 1})
     })
     .then(res => res.json())
     .then(() => {
       // toyDiv.innerHTML = ''
       // fetchToys()
       console.log(e.target.parentElement.children[2])
-      e.target.parentElement.children[2].textContent = `${toy.likes + 1} Likes`
+      e.target.parentElement.children[2].textContent = `${refreshedToy.likes + 1} Likes`
     })
-
+  })
   }
 
   function buildToys(toy){
@@ -80,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
       likes: 0
     }
     createToys(toyParams)
+    toyFormContainer.style.display = "none";
   })
 
   addBtn.addEventListener("click", () => {
